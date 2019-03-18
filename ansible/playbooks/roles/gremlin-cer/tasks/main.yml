@@ -1,0 +1,26 @@
+---
+- name: Clone gremlin-cer repo
+  git:
+    repo: "{{ gremlin_cer_repo }}"
+    dest: "{{ gremlin_cer_source_dir }}"
+
+- name: Build gremlin-cer
+  shell:
+    chdir: "{{ gremlin_cer_source_dir }}"
+    cmd: source ~/.sdkman/bin/sdkman-init.sh && gradle assembleDist
+    executable: /bin/bash
+
+- name: Unpack gremlin-cer distribution archive
+  unarchive:
+    src: "{{ gremlin_cer_source_dir }}/build/distributions/gremlin-cer-1.0-SNAPSHOT.zip"
+    dest: /tmp
+    list_files: yes
+  register: gremlin_cer_archive_contents
+
+- name: Create gremlin-cer directory
+  file:
+    path: "{{ gremlin_cer_dir }}"
+    state: directory
+
+- name: Copy gremlin-cer to Gremlin dir
+  shell: cp -r /tmp/{{ gremlin_cer_archive_contents.files[0].split('/')[0] }}/* {{ gremlin_cer_dir }}

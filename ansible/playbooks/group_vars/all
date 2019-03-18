@@ -1,0 +1,21 @@
+apps_dir: /var/apps
+
+app_dir: "{{ apps_dir }}/CredentialRegistry"
+app_repo: https://github.com/CredentialEngine/CredentialRegistry
+app_user: app
+
+database_name: credential_registry
+database_password: ji32k7au4a83
+database_user: db
+
+gremlin_cer_dir: "{{ gremlin_server_dir }}/gremlin-cer"
+gremlin_cer_source_dir: "{{ apps_dir }}/CredentialRegistryGremlin"
+gremlin_cer_repo: https://github.com/CredentialEngine/CredentialRegistryGremlin
+gremlin_console_dir: "{{ gremlin_server_dir }}/console"
+gremlin_console_url: https://archive.apache.org/dist/tinkerpop/3.3.3/apache-tinkerpop-gremlin-console-3.3.3-bin.zip
+gremlin_master_password: "1T.;|Q-j+-.^C-yGT9%j"
+gremlin_master_username: credentialregistry
+gremlin_password: "_tFM=N%.X8RVpo~BSL9w"
+gremlin_server_dir: /opt/gremlin
+gremlin_server_url: https://archive.apache.org/dist/tinkerpop/3.3.3/apache-tinkerpop-gremlin-server-3.3.3-bin.zip
+gremlin_username: credentialregistry

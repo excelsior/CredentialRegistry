@@ -1,0 +1,6 @@
+[submodule "ansible/playbooks/roles/postgresql"]
+	path = ansible/playbooks/roles/postgresql
+	url = git@github.com:geerlingguy/ansible-role-postgresql.git
+[submodule "ansible/playbooks/roles/sdkman"]
+	path = ansible/playbooks/roles/sdkman
+	url = git@github.com:Comcast/ansible-sdkman.git

@@ -1,0 +1,40 @@
+---
+- name: Create apps dir
+  file:
+    path: "{{ apps_dir }}"
+    state: directory
+
+- name: Copy env vars file
+  template:
+    src: /etc/templates/env_vars.sh.j2
+    dest: /etc/profile.d/env_vars.sh
+
+- name: Create app user
+  user:
+    name: "{{ app_user }}"
+
+- name: Add PPA for required Ruby version
+  apt_repository:
+    repo: ppa:brightbox/ruby-ng
+    state: present
+
+- name: Install packages
+  apt:
+    name:
+      - g++
+      - git
+      - libxml2-dev
+      - libxmlsec1-dev
+      - make
+      - ruby2.3
+      - ruby2.3-dev
+      - sudo
+      - supervisor
+      - unzip
+      - zlib1g-dev
+
+- name: Install Bundler
+  gem:
+    name: bundler
+    version: 1.16.2
+    user_install: no

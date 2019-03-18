@@ -1,0 +1,27 @@
+---
+- name: Download Gremlin Console
+  get_url:
+    url: "{{ gremlin_console_url }}"
+    dest: /tmp
+  register: gremlin_console_archive
+
+- name: Unpack Gremlin Console archive
+  unarchive:
+    src: "{{ gremlin_console_archive.dest }}"
+    dest: /tmp
+    list_files: yes
+  register: gremlin_console_archive_contents
+
+- name: Create Gremlin Console directory
+  file:
+    path: "{{ gremlin_console_dir }}"
+    state: directory
+    recurse: yes
+
+- name: Copy Gremlin Console
+  shell: cp -r /tmp/{{ gremlin_console_archive_contents.files[0].split('/')[0] }}/* {{ gremlin_console_dir }}
+
+- name: Copy Gremlin Console remote secure config
+  template:
+    src: /etc/templates/remote-secure.yaml.j2
+    dest: "{{ gremlin_console_dir }}/conf/remote-secure.yaml"

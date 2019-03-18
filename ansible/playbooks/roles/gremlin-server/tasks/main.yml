@@ -1,0 +1,48 @@
+---
+- name: Download Gremlin Server
+  get_url:
+    url: "{{ gremlin_server_url }}"
+    dest: /tmp
+  register: gremlin_server_archive
+
+- name: Unpack Gremlin Server archive
+  unarchive:
+    src: "{{ gremlin_server_archive.dest }}"
+    dest: /tmp
+    list_files: yes
+  register: gremlin_server_archive_contents
+
+- name: Create Gremlin Server directories
+  file:
+    path: "{{ gremlin_server_dir }}/{{ item }}"
+    state: directory
+    recurse: yes
+  with_items:
+    - primary
+    - replica
+
+- name: Copy Gremlin Server to primary & replica dirs
+  shell: cp -r /tmp/{{ gremlin_server_archive_contents.files[0].split('/')[0] }}/* {{ gremlin_server_dir }}/{{ item }}
+  with_items:
+    - primary
+    - replica
+
+- name: Copy Gremlin Server config files
+  shell: cp -r {{ app_dir }}/db/gremlin-config/* {{ gremlin_server_dir }}
+
+- name: Copy Gremlin Server credentials
+  shell: cp /etc/data/gremlin/{{ item }}/credentials.kryo {{ gremlin_server_dir }}/{{ item }}/data
+  with_items:
+    - primary
+    - replica
+
+- name: Install Neo4j
+  shell:
+    chdir: "{{ gremlin_server_dir }}"
+    cmd: source ~/.sdkman/bin/sdkman-init.sh && ./{{ item }}/bin/gremlin-server.sh install org.apache.tinkerpop neo4j-gremlin 3.3.3
+    executable: /bin/bash
+  environment:
+    GREMLIN_YAML: conf/server_{{ item }}.yaml
+  with_items:
+    - primary
+    - replica

@@ -1,0 +1,10 @@
+---
+- name: Install Redis
+  apt:
+    name: redis-server
+
+- name: Change Redis config to bind to correct interface
+  replace:
+    path: /etc/redis/redis.conf
+    regexp: "^bind.*"
+    replace: "bind 0.0.0.0"

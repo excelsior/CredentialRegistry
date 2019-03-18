@@ -1,0 +1,41 @@
+---
+- name: Clone app repo
+  git:
+    repo: "{{ app_repo }}"
+    dest: "{{ app_dir }}"
+
+- name: Set owner of app directory
+  file:
+    path: "{{ app_dir }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    recurse: yes
+
+- name: Install gems
+  become: yes
+  become_user: "{{ app_user }}"
+  bundler:
+    chdir: "{{ app_dir }}"
+    extra_args: --path vendor/bundle
+
+- name: Generate private secret key
+  shell:
+    chdir: "{{ app_dir }}"
+    cmd: bin/rake secret
+  register: rake_secret_output
+
+- name: Store private secret key
+  copy:
+    content: "export ENCRYPTED_PRIVATE_KEY_SECRET={{ rake_secret_output.stdout }}"
+    dest: /etc/profile.d/private_secret_key.sh
+
+- name: Restore DB dump
+  shell:
+    chdir: "{{ app_dir }}"
+    cmd: cp /etc/data/content.dump db/dump && . /etc/profile && bin/rake db:pg_restore
+  ignore_errors: yes
+
+# - name: Migrate database
+#   shell:
+#     chdir: "{{ app_dir }}"
+#     cmd: . /etc/profile && bin/rake db:migrate

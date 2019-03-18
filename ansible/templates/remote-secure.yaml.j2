@@ -1,0 +1,7 @@
+hosts: [localhost]
+port: 8183
+username: "{{ gremlin_username }}"
+password: "{{ gremlin_password }}"
+connectionPool: {
+  enableSsl: true}
+serializer: { className: org.apache.tinkerpop.gremlin.driver.ser.GryoMessageSerializerV3d0, config: { serializeResultToString: true }}
